@@ -1,3 +1,5 @@
+#model
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,9 +15,14 @@ class VAE(nn.Module):
             setattr(self, ss, getattr(vocab, ss))
 
         # Word embeddings layer
-        n_vocab, d_emb = len(vocab), vocab.vectors.size(1)
-        self.x_emb = nn.Embedding(n_vocab, d_emb, self.pad)
-        self.x_emb.weight.data.copy_(vocab.vectors)
+        n_vocab = len(vocab)
+        d_emb = config.embedding_dim  # Use embedding_dim from config
+        self.x_emb = nn.Embedding(n_vocab, d_emb, padding_idx=self.pad)
+
+        # Initialize embeddings (optional: use a custom initialization)
+        nn.init.normal_(self.x_emb.weight, mean=0, std=0.1)
+
+        # Freeze embeddings if required
         if config.freeze_embeddings:
             self.x_emb.weight.requires_grad = False
 
@@ -71,7 +78,6 @@ class VAE(nn.Module):
             self.encoder,
             self.decoder
         ])
-
     @property
     def device(self):
         return next(self.parameters()).device
