@@ -114,8 +114,7 @@ class VAETrainer(MosesTrainer):
                     logger.append(postfix)
                     logger.save(self.config.log_file)
 
-            if (self.config.model_save is not None) and \
-                    (epoch % self.config.save_frequency == 0):
+            if (epoch % self.config.save_frequency == 0):
                 model = model.to('cpu')
                 torch.save(model.state_dict(),
                            self.config.model_save[:-3] +
