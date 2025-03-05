@@ -137,7 +137,7 @@ class VAE(nn.Module):
 
         return z, kl_loss
 
-    def forward_decoder(self, x, z):
+    def forward_decoder(self, x, z, return_y=False):
         """Decoder step, emulating x ~ G(z)
 
         :param x: list of tensors of longs, input sentence x
@@ -170,7 +170,10 @@ class VAE(nn.Module):
             ignore_index=self.pad
         )
 
-        return recon_loss
+        if return_y:
+            return recon_loss, y
+        else:
+            return recon_loss
 
     def sample_z_prior(self, n_batch):
         """Sampling z ~ p(z) = N(0, I)
